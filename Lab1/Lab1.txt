@@ -1,10 +1,10 @@
 
 Part 1: Data Types and their Sizes
 ========================
-Byte Size: *
-Short Int Size: *
-Integer Size: *
-Long Integer Size: *
+Byte Size: 8 bits
+Short Int Size: 16 bits
+Integer Size: 32 bits
+Long Integer Size: 64 bits
 ========================
 Part 2: Byte Ordering
 ========================
