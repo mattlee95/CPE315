@@ -1,0 +1,56 @@
+
+Part 1: Data Types and their Sizes
+========================
+Byte Size: *
+Short Int Size: *
+Integer Size: *
+Long Integer Size: *
+========================
+Part 2: Byte Ordering
+========================
+Byte Values of entire array (show as hexadecimal values, e.g., C7):
+** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
+Short Int versions of the first four values of an array in hexadecimal:
+**** **** **** ****    (e.g., F724 ... )
+Int versions of the first two values of an array in hexadecimal:
+******** ******** (e.g., A52F8723 ...
+Long Int version of the first value of an array in hex:
+**************** (e.g., 0234223F232E3A24 )
+2e: ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
+2f: **** **** **** ****
+2g: ******** ********
+2h: ****************
+========================
+Part 3: Unsigned Addition of Small Fields ========================
+0x20 + 0x35 = 0x**
+0x80 + 0x7F = 0x**
+0x80 + 0xFF = 0x**
+0xFF + 0x01 = 0x**
+========================
+Part 4: Detecting a Carry condition
+========================
+0x20 + 0x35 Carry: *  (0 or 1)
+0x80 + 0x7F Carry: *
+0x80 + 0xFF Carry: *
+0xFF + 0x01 Carry: *
+========================
+Part 5: Signed Addition and Overflow
+========================
+0x20 + 0x35 Overflow: *
+0x80 + 0x7F Overflow: *
+0x80 + 0xFF Overflow: *
+0xFF + 0x01 Overflow: *
+========================
+Part 6: Performing Extended Field Arithmetic
+========================
+6a)
+   0x44  0x00  0x00  0x00  0x01
++  0x30  0xFF  0xFF  0x00  0x00
+=  0x**  0x**  0x**  0x**  0x**
+Carry Out = *
+6b)
+  0xFF  0xFF  0xFF  0xFF  0xFF
++ 0x00  0x00  0x00  0x00  0x01
+= 0x**  0x**  0x**  0x**  0x**
+Carry Out = *
+========================
