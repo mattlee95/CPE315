@@ -1,21 +1,21 @@
 
 Part 1: Data Types and their Sizes
 ========================
-Byte Size: *
-Short Int Size: *
-Integer Size: *
-Long Integer Size: *
+Byte Size: 8 bits
+Short Int Size: 16 bits
+Integer Size: 32 bits
+Long Integer Size: 64 bits
 ========================
 Part 2: Byte Ordering
 ========================
 Byte Values of entire array (show as hexadecimal values, e.g., C7):
 ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
 Short Int versions of the first four values of an array in hexadecimal:
-**** **** **** ****    (e.g., F724 ... )
+3341 8054 99ff 7801 
 Int versions of the first two values of an array in hexadecimal:
-******** ******** (e.g., A52F8723 ...
+80543341 780199ff 
 Long Int version of the first value of an array in hex:
-**************** (e.g., 0234223F232E3A24 )
+780199ff80543341 
 2e: ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
 2f: **** **** **** ****
 2g: ******** ********
