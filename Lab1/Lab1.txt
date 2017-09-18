@@ -11,11 +11,11 @@ Part 2: Byte Ordering
 Byte Values of entire array (show as hexadecimal values, e.g., C7):
 ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
 Short Int versions of the first four values of an array in hexadecimal:
-3341 8054 99ff 7801 (e.g., F724 ... )
+3341 8054 99ff 7801 
 Int versions of the first two values of an array in hexadecimal:
-80543341 780199ff (e.g., A52F8723 ...
+80543341 780199ff 
 Long Int version of the first value of an array in hex:
-780199ff80543341 (e.g., 0234223F232E3A24 )
+780199ff80543341 
 2e: ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
 2f: **** **** **** ****
 2g: ******** ********
