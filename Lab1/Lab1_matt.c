@@ -28,8 +28,8 @@ int main()
 
    long int *long_int_cast = (long int*)bytestring;
    long int *long_int_cast_swap = (long int*)bytestring_swap;
-   printf("cast to long int %x\n", *long_int_cast);
-   printf("cast to long int (endian swap) %x\n", *long_int_cast_swap);
+   printf("cast to long int %lx\n", *long_int_cast);
+   printf("cast to long int (endian swap) %lx\n", *long_int_cast_swap);
 
    int *int_cast = (int*)bytestring;
    int *int_cast_swap = (int*)bytestring_swap;
