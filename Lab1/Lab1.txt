@@ -41,9 +41,9 @@ Part 4: Detecting a Carry condition
 Part 5: Signed Addition and Overflow
 ========================
 0x20 + 0x35 Overflow: 0x55, no overflow
-0x80 + 0x7F Overflow: 0xFF, overflow?
-0x80 + 0xFF Overflow: *
-0xFF + 0x01 Overflow: *
+0x80 + 0x7F Overflow: 0xFF,no overflow?
+0x80 + 0xFF Overflow: 0x7F, overflow
+0xFF + 0x01 Overflow: 0x00, no overflow
 ========================
 Part 6: Performing Extended Field Arithmetic
 ========================
