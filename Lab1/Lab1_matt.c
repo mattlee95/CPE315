@@ -2,8 +2,8 @@
 
 unsigned char add_bytes(unsigned char byte1, unsigned char byte2);
 unsigned char find_carry(unsigned char byte1, unsigned char byte2);
-unsigned char add_bytes_signed(unsigned char byte1, unsigned char byte2);
-unsigned char find_overflow(unsigned char byte1, unsigned char byte2);
+char add_bytes_signed(char byte1, char byte2);
+char find_overflow(char byte1, char byte2);
 unsigned int arbitrary_byte_add (unsigned char *result, unsigned char *a1, unsigned char *a2, int size, unsigned int carry_in);
 
 
@@ -126,16 +126,16 @@ unsigned char find_carry(unsigned char byte1, unsigned char byte2)
    return result;
 }
 
-unsigned char add_bytes_signed(unsigned char byte1, unsigned char byte2)
+char add_bytes_signed(char byte1, char byte2)
 {
-   unsigned char res = byte1 + byte2;
+   char res = byte1 + byte2;
    return res;
 }
 
-unsigned char find_overflow(unsigned char byte1, unsigned char byte2)
+char find_overflow(char byte1, char byte2)
 {
-   unsigned char res = 0;
-   unsigned char sum = byte1 + byte2;
+   char res = 0;
+   char sum = byte1 + byte2;
    //idk
    return res;
 }
