@@ -138,12 +138,12 @@ char add_bytes_signed(char byte1, char byte2)
    int coef2 = 1;
    if (byte1 > 0x79)
    {
-      byte1 = byte1 ^ 0xFF;
+      byte1 = (byte1 ^ 0xFF) + 0x01;
       coef1 = -1;
    }
    if (byte2 > 0x79)
    {
-      byte2 = byte2 ^ 0xFF;
+      byte2 = (byte2 ^ 0xFF) + 0x01;
       coef2 = -1;
    }
    char res = coef1*byte1 + coef2*byte2;
