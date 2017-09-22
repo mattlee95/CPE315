@@ -3,7 +3,7 @@
 unsigned char add_bytes(unsigned char byte1, unsigned char byte2);
 unsigned char find_carry(unsigned char byte1, unsigned char byte2);
 char add_bytes_signed(char byte1, char byte2);
-char find_overflow(char byte1, char byte2);
+int find_overflow(unsigned char byte1, unsigned char byte2);
 unsigned int arbitrary_byte_add (unsigned char *result, unsigned char *a1, unsigned char *a2, int size, unsigned int carry_in);
 
 
@@ -17,10 +17,10 @@ int main()
    char byte;
    long int long_int;
 
-   printf("size of int %d\n", sizeof(integer));
-   printf("size of short int %d\n", sizeof(short_int));
-   printf("size of byte %d\n", sizeof(byte));
-   printf("size of long int %d\n", sizeof(long_int));
+   printf("Byte Size: %lu\n", sizeof(byte));
+   printf("Short Int Size: %lu\n", sizeof(short_int));
+   printf("Integer Size: %lu\n", sizeof(integer));
+   printf("Long Int Size: %lu\n", sizeof(long_int));
    
    //========== PART 2 ==========
    printf("\n========== PART 2 ==========\n");
@@ -28,34 +28,40 @@ int main()
    int i;
 
    unsigned char bytestring[] = {0x41, 0x33, 0x54, 0x80, 0xFF, 0x99, 0x01, 0x78, 0x55, 0x20, 0xFE, 0xEE, 0x00, 0x00, 0x00, 0x00}; 
+   unsigned char bytestring_swap[] = {0x00, 0x00, 0x00, 0x00, 0xEE,0xFE, 0x20, 0x55, 0x78, 0x01, 0x99, 0xFF, 0x80, 0x54, 0x33, 0x41};
    unsigned char bytestring_swap_int[] = {0x80, 0x54, 0x33, 0x41, 0x78, 0x01, 0x99, 0xFF, 0xEE, 0xFE, 0x20, 0x55, 0x00, 0x00, 0x00, 0x00};
    unsigned char bytestring_swap_short[] = {0x33, 0x41, 0x80, 0x54, 0x99, 0xFF, 0x78, 0x01, 0x20, 0x55, 0xFE, 0xEE, 0x00, 0x00, 0x00, 0x00};
    unsigned char bytestring_swap_long[] = {0x78, 0x01, 0x99, 0xFF, 0x80, 0x54, 0x33, 0x41, 0x00, 0x00, 0x00, 0x00, 0xEE, 0xFE, 0x20, 0x55};
 
-   long int *long_int_cast = (long int*)&bytestring;
-   long int *long_int_cast_swap = (long int*)&bytestring_swap_long;
-   printf("cast to long int %lx\n", *long_int_cast);
-   printf("cast to long int (endian swap)");
-   for (i = 0; i < sizeof(*bytestring_swap_long)/sizeof(long int); i++)
+   printf("Byte values of entire array: \n");
+   for (int i=0; i<16; i++) {
+      printf("%x ", bytestring[i]);
+   }
+
+   short int *short_int_cast = (short int*)&bytestring;
+   short int *short_int_cast_swap = (short int*)&bytestring_swap_short;
+   printf("\nShort int versions:\n");
+   for (i = 0; i < 4; i++)
    {
-      printf(" %lx", long_int_cast_swap[i]);
+      printf("%hx ", short_int_cast[i]);
    }
    printf("\n");
 
    int *int_cast = (int*)&bytestring;
    int *int_cast_swap = (int*)&bytestring_swap_int;
-   printf("cast to int %x\n", *int_cast);
-   printf("cast to int (endian swap) %x\n", *int_cast_swap);
+   printf("Int versions: \n%x %x\n", int_cast[0], int_cast[1]);
 
-   short int *short_int_cast = (short int*)&bytestring;
-   short int *short_int_cast_swap = (short int*)&bytestring_swap_short;
-   printf("cast to short int");
-   for (i = 0; i < sizeof(*bytestring_swap_short)/sizeof(short int); i++)
-   {
-      printf(" %x", short_int_cast[i]);
+   long int *long_int_cast = (long int*)&bytestring;
+   long int *long_int_cast_swap = (long int*)&bytestring_swap_long;
+   printf("Long int version:\n%lx\n", long_int_cast[0]);
+
+   printf("Big-endian byte array: \n");
+   for (int i=0; i<16; i++) {
+      printf("%x ", bytestring_swap[i]);
    }
-   printf("\n");
-   printf("cast to short int (endian swap) %x\n", *short_int_cast_swap); 
+   printf("\nCast to short int (endian swap): \n%hx %hx %hx %hx\n", *short_int_cast_swap, short_int_cast_swap[1], short_int_cast_swap[2], short_int_cast_swap[4]);
+   printf("Cast to int (endian swap):\n%x %x\n", int_cast_swap[0], int_cast_swap[1]);
+   printf("Cast to long int (endian swap):\n%lx\n", long_int_cast_swap[0]);
 
    //========== PART 3 ==========
    printf("\n========== PART 3 ==========\n");
@@ -76,10 +82,10 @@ int main()
    //========== PART 5 ==========
    printf("\n======== Part 5 ==========\n");
 
-   printf("5.1 0x20 + 0x35 = 0x%x, overflow: %i\n", add_bytes_signed(0x20, 0x35), find_overflow(0x20, 0x35));
-   printf("5.2 0x80 + 0x7F = 0x%x, overflow: %i\n", add_bytes_signed(0x80, 0x7F), find_overflow(0x80, 0x7F));
-   printf("5.3 0x80 + 0xFF = 0x%x, overflow: %i\n", add_bytes_signed(0x80, 0xFF), find_overflow(0x80, 0xFF));
-   printf("5.4 0xFF + 0x01 = 0x%x, overflow: %i\n", add_bytes_signed(0xFF, 0x01), find_overflow(0xFF, 0x01));
+   printf("5.1 0x20 + 0x35 = 0x%x, overflow: %d\n", add_bytes_signed(0x20, 0x35), find_overflow(0x20, 0x35));
+   printf("5.2 0x80 + 0x7F = 0x%x, overflow: %d\n", add_bytes_signed(0x80, 0x7F), find_overflow(0x80, 0x7F));
+   printf("5.3 0x80 + 0xFF = 0x%x, overflow: %d\n", add_bytes_signed(0x80, 0xFF), find_overflow(0x80, 0xFF));
+   printf("5.4 0xFF + 0x01 = 0x%x, overflow: %d\n", add_bytes_signed(0xFF, 0x01), find_overflow(0xFF, 0x01));
 
    //========== PART 6 ==========
    printf("\n======== Part 6 ==========\n");
@@ -101,7 +107,7 @@ int main()
    unsigned char result2[] =  {0x00, 0x00, 0x00, 0x00, 0x00};
    unsigned int carry_in2 = 0;
    unsigned int carry2 = arbitrary_byte_add(result2, a21, a22, 5, carry_in2);
-   printf("6. 0xFFFFFFFFFF + 0x0000000001 = 0x%x ", result2[0]);
+   printf("6b. 0xFFFFFFFFFF + 0x0000000001 = 0x%x ", result2[0]);
    printf("0x%x ", result2[1]);
    printf("0x%x ", result2[2]);
    printf("0x%x ", result2[3]);
@@ -132,12 +138,13 @@ char add_bytes_signed(char byte1, char byte2)
    return res;
 }
 
-char find_overflow(char byte1, char byte2)
+int find_overflow(unsigned char byte1, unsigned char byte2)
 {
-   char res = 0;
-   char sum = byte1 + byte2;
-   //idk
-   return res;
+   int sum = byte1 + byte2;
+   if ((byte1 < 0 && byte2 < 0 && sum >= 0) || (byte1 >= 0 && byte2 >= 0 && sum < 0)) {
+      return 1;
+   }
+   return 0;
 }
 
 unsigned int arbitrary_byte_add(unsigned char *result, unsigned char *a1, unsigned char *a2, int size, unsigned int carry_in)
