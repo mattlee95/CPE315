@@ -3,7 +3,7 @@
 unsigned char add_bytes(unsigned char byte1, unsigned char byte2);
 unsigned char find_carry(unsigned char byte1, unsigned char byte2);
 char add_bytes_signed(char byte1, char byte2);
-int find_overflow(unsigned char byte1, unsigned char byte2);
+int find_overflow(char byte1, char byte2, char sum);
 unsigned int arbitrary_byte_add (unsigned char *result, unsigned char *a1, unsigned char *a2, int size, unsigned int carry_in);
 
 
@@ -34,7 +34,7 @@ int main()
    unsigned char bytestring_swap_long[] = {0x78, 0x01, 0x99, 0xFF, 0x80, 0x54, 0x33, 0x41, 0x00, 0x00, 0x00, 0x00, 0xEE, 0xFE, 0x20, 0x55};
 
    printf("Byte values of entire array: \n");
-   for (int i=0; i<16; i++) {
+   for (i = 0; i < 16; i++) {
       printf("%x ", bytestring[i]);
    }
 
@@ -56,7 +56,7 @@ int main()
    printf("Long int version:\n%lx\n", long_int_cast[0]);
 
    printf("Big-endian byte array: \n");
-   for (int i=0; i<16; i++) {
+   for (i = 0; i < 16; i++) {
       printf("%x ", bytestring_swap[i]);
    }
    printf("\nCast to short int (endian swap): \n%hx %hx %hx %hx\n", *short_int_cast_swap, short_int_cast_swap[1], short_int_cast_swap[2], short_int_cast_swap[4]);
@@ -82,10 +82,10 @@ int main()
    //========== PART 5 ==========
    printf("\n======== Part 5 ==========\n");
 
-   printf("5.1 0x20 + 0x35 = 0x%x, overflow: %d\n", add_bytes_signed(0x20, 0x35), find_overflow(0x20, 0x35));
-   printf("5.2 0x80 + 0x7F = 0x%x, overflow: %d\n", add_bytes_signed(0x80, 0x7F), find_overflow(0x80, 0x7F));
-   printf("5.3 0x80 + 0xFF = 0x%x, overflow: %d\n", add_bytes_signed(0x80, 0xFF), find_overflow(0x80, 0xFF));
-   printf("5.4 0xFF + 0x01 = 0x%x, overflow: %d\n", add_bytes_signed(0xFF, 0x01), find_overflow(0xFF, 0x01));
+   printf("5.1 0x20 + 0x35 = 0x%x, overflow: %d\n", add_bytes_signed(0x20, 0x35), find_overflow(0x20, 0x35, add_bytes_signed(0x20, 0x35)));
+   printf("5.2 0x80 + 0x7F = 0x%x, overflow: %d\n", add_bytes_signed(0x80, 0x7F), find_overflow(0x80, 0x7F, add_bytes_signed(0x80, 0x7F)));
+   printf("5.3 0x80 + 0xFF = 0x%x, overflow: %d\n", add_bytes_signed(0x80, 0xFF), find_overflow(0x80, 0xFF, add_bytes_signed(0x80, 0xFF)));
+   printf("5.4 0xFF + 0x01 = 0x%x, overflow: %d\n", add_bytes_signed(0xFF, 0x01), find_overflow(0xFF, 0x01, add_bytes_signed(0xFF, 0x01)));
 
    //========== PART 6 ==========
    printf("\n======== Part 6 ==========\n");
@@ -134,14 +134,29 @@ unsigned char find_carry(unsigned char byte1, unsigned char byte2)
 
 char add_bytes_signed(char byte1, char byte2)
 {
-   char res = byte1 + byte2;
+   int coef1 = 1;
+   int coef2 = 1;
+   if (byte1 > 0x79)
+   {
+      byte1 = byte1 ^ 0xFF;
+      coef1 = -1;
+   }
+   if (byte2 > 0x79)
+   {
+      byte2 = byte2 ^ 0xFF;
+      coef2 = -1;
+   }
+   char res = coef1*byte1 + coef2*byte2;
+   if (res < 0)
+   {
+      res = res ^ 0xFF;
+   }
    return res;
 }
 
-int find_overflow(unsigned char byte1, unsigned char byte2)
+int find_overflow(char byte1, char byte2, char sum)
 {
-   int sum = byte1 + byte2;
-   if ((byte1 < 0 && byte2 < 0 && sum >= 0) || (byte1 >= 0 && byte2 >= 0 && sum < 0)) {
+   if ((byte1 <= 0x79 && byte2 <= 0x79 && sum > 0x79) || (byte1 > 0x79 && byte2 > 0x79 && sum <= 0x79)) {
       return 1;
    }
    return 0;
