@@ -136,12 +136,12 @@ char add_bytes_signed(char byte1, char byte2)
 {
    int coef1 = 1;
    int coef2 = 1;
-   if (byte1 > 0x79)
+   if (byte1 > 0x7F)
    {
       byte1 = (byte1 ^ 0xFF) + 0x01;
       coef1 = -1;
    }
-   if (byte2 > 0x79)
+   if (byte2 > 0x7F)
    {
       byte2 = (byte2 ^ 0xFF) + 0x01;
       coef2 = -1;
@@ -156,7 +156,7 @@ char add_bytes_signed(char byte1, char byte2)
 
 int find_overflow(char byte1, char byte2, char sum)
 {
-   if ((byte1 <= 0x79 && byte2 <= 0x79 && sum > 0x79) || (byte1 > 0x79 && byte2 > 0x79 && sum <= 0x79)) {
+   if ((byte1 <= 0x7F && byte2 <= 0x7F && sum > 0x7F) || (byte1 > 0x7F && byte2 > 0x7F && sum <= 0x7F)) {
       return 1;
    }
    return 0;
