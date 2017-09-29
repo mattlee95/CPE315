@@ -35,9 +35,9 @@
 =========================
 =========Part 4==========
 4a. Exp = 1, Frac = 0x4000000
-4b. Exp = -9, Frac = 0x********
-4c. Exp = 3, Frac = 0x********
-4d. Exp = -13, Frac = 0x******** 
+4b. Exp = -9, Frac = 0x4000000
+4c. Exp = 3, Frac = 0x8000000
+4d. Exp = -13, Frac = 0x4000000
 CPE 315 Rev W2017.1, Lab Assignment 2 –Binary Multiply and IEEE 754 Floating Point Operation Page 11
 =========================
 =========Part 5==========
