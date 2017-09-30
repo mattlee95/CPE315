@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// Part 2 -  Unpack an IEEE 754 argument – obtain components 
-
 struct infloat {
    int exponent;
    int fraction;
@@ -12,7 +10,6 @@ struct infloat {
 
 struct infloat* extract_float(struct infloat *xp, float f);
 void pack_float(struct infloat *xp);
-
 
 
 int main(int argc, char *argv[]) {
