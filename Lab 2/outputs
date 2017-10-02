@@ -7,31 +7,39 @@
 =========================
 =========Part 2==========
 2a. Test case: 0x40C80000
- Float: 6.250000
- Exponent:*
- Fraction:0x********
+  Float: 6.25000000
+  Exponent: 2
+  Fraction: 0x64000000
+
 2b. Test case: 0xc3000000
- Float: -2.000000
- Exponent:*
- Fraction:0x********
+  Float: -128.00000000
+  Exponent: 7
+  Fraction: 0xC0000000
+
 2c. Test case: 0x3e000000
- Float: 0.125000
- Exponent:*
- Fraction:0x********
+  Float: 0.12500000
+  Exponent: -3
+  Fraction: 0x40000000
+
 2d. Test case: 0x3EAAAAAB
- Float: 0.333333
- Exponent:*
- Fraction:0x********
+  Float: 0.33333334
+  Exponent: -2
+  Fraction: 0x55555580
+
 =========================
 =========Part 3==========
 3a. Test case: 0x40C80000
- Float:*
-3b. Test case: 0xC3000000
- Float:*
-3c. Test case: 0x3E000000
- Float:*
+  Float: 6.250000
+
+3b. Test case: 0xc3000000
+  Float: 128.000000
+
+3c. Test case: 0x3e000000
+  Float: 0.125000
+
 3d. Test case: 0x3EAAAAAB
- Float:*
+  Float: 0.333333
+
 =========================
 =========Part 4==========
 4a. Exp = 1, Frac = 0x4000000
@@ -40,25 +48,27 @@
 4d. Exp = -13, Frac = 0x4000000
 CPE 315 Rev W2017.1, Lab Assignment 2 –Binary Multiply and IEEE 754 Floating Point Operation Page 11
 =========================
-=========Part 5==========
+========== PART5 ==========
 5a. 0xBF800000 and 0x3F800000 (-1 and +1)
- Sum:0x******** (* Decimal Value)
+  Sum:00000000, 0
 5b. 0x3F800000 and 0x3E800000 (1 + .25)
- Sum:0x******** (*)
+  Sum:3FA00000, 1.25
 5c. 0x40800000 and 0xBE000000 (4.0 + (-.125) )
- Sum:0x******** (*)
-=========================
-=========Part 6==========
+  Sum:40840000, 4.125
+===========================
+
+========== PART6 ==========
 6a. 0x40400000 and 0x3F800000 (3 – 1)
- Diff:0x******** (* Decimal Value)
+  Diff:40000000, 2
 6b. 0x40400000 and 0xBF800000 (3 – (-1) )
- Diff:0x******** (*)
+  Diff:C0000000, -2
 6c. 0x40000000 and 0x40000000
- Diff:0x******** (*)
-=========================
-=========Part 7==========
+  Diff:00000000, 0
+===========================
+
+========== PART7 ==========
 7a. 0x40200000 and 0x40200000 (2.5 x 2.5)
- Product:0x******** (* Decimal Value)
+  Product:40C80000, 6.25
 7b. 0xc1700000 and 0x45800000 (-15 x 4096)
- Product:0x******** (*)
-========================= 
+  Product:C7700000, -61440
+===========================
