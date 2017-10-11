@@ -1,0 +1,76 @@
+Part 1
+
+What is the value of $t0 after this instruction ?
+	x0001
+  
+What are the values of the binary Opcode, Rs, Rt, and Immed fields (in hex)?
+Opcode - x0D
+Rs - x00
+Rt - x09
+Immed field - x00F2
+
+We now have two values loaded into $t0 and $t1. Step over this instruction to execute it, and then answer these: 
+What are the values of the Opcode, Rs, Rt, and Rd, and Function fields of this instruction?
+Opcode - x00
+Rs - x08
+Rt - x09
+Rd - x0A
+Funct - x20
+
+How does the Opcode shown in the “Basic” field correspond to the Opcode and Function fields? 
+	The opcode is always 0 for R instructions, so the function field actually tells the assembler what type of arithmetic to perform.
+
+What is the new value of $t2 after executing this instruction?
+	x000000f3
+
+Add $t3, $t2, 0x33
+
+What is the new value of $t3? 
+            x0126
+
+What are the opcode, Rs, Rt, and Immediate value for this instruction?
+	Opcode - x09
+	Rs - x00
+	Rt - x09
+	Immed - x5145
+
+What is $t0 after execution of the lui instruction ? 
+x33330000
+
+What is target value $t0 ?
+x43218765
+
+
+What instruction is indicated by the Opcode of this pseudoinstruction? 
+Addiu - add immediate unsigned
+
+What is the result value in $t0 ? 
+x00002345
+
+After executing this instruction, 
+What is the result in $t0?
+	x53468ace
+
+What are the Opcodes used in this pseudoinstruction? (2 items) 
+		lui and ori
+
+What is the instruction type (R,I,J)? 
+I
+
+What are the relevant fields (e.g., Rs, Rt etc.) for this instruction and what are their binary values?
+Lui: x3c015346
+0011 11 00 000 0 0001 0101 0011 0100 0110
+Opcode - 001111 = x0F
+Rs - 00000 = x00
+Rt - 00001 = x01
+Immed - 0101 0011 0100 0110 = x5346
+
+Ori: x34288ace
+0011 01 00 001 0 1000 1000 1010 1100 1110
+Opcode - 01101 = x0D
+Rs - 00001 = x01
+Rt - 01000 x08
+Immed - 1000 1010 1100 1110 = x8ace
+
+Literally - should load immediate value of 0x53468ACE into $t0. 
+Actually - loads x00005346 into $at, then performs an ori with the value in $at and x00008ACE and puts that value in $t0
