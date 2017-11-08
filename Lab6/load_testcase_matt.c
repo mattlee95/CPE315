@@ -297,22 +297,21 @@ void execute_R(char *F, unsigned int Rd, unsigned int Rs, unsigned int Rt, unsig
 }
 void R_add(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
-   regs[Rd] = regs[Rs] + regs[Rt];
+   regs[Rd] = (signed int)regs[Rs] + (signed int)regs[Rt];
    num_clock_cycles += 4;
    PC += 4;
 }
 
 void R_addu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   unsigned int temp = regs[Rs] + regs[Rt];
-   regs[Rd] = temp;
+   regs[Rd] = regs[Rs] + regs[Rt];
    num_clock_cycles += 4;
    PC += 4;
 }
 
 void R_sub(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
-   regs[Rd] = regs[Rs] - regs[Rt];
+   regs[Rd] = (signed int)regs[Rs] - (signed int)regs[Rt];
    num_clock_cycles += 4;
    PC += 4;
 }
@@ -408,9 +407,7 @@ void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 
 void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   unsigned int temp1 = regs[Rs];
-   unsigned int temp2 = regs[Rt];
-   if(temp1 < temp2)
+   if((signed int)regs[Rs] < (signed int)regs[Rt])
       regs[Rd] = 1;
    else
       regs[Rd] = 0;
