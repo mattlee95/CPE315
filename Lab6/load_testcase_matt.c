@@ -271,54 +271,35 @@ void execute_instruction(MIPS instruction)
 
 void execute_R(char *F, unsigned int Rd, unsigned int Rs, unsigned int Rt, unsigned int Sh)
 {
-   if (strcmp(F, "add") == 0)
-      R_add(Rd, Rs, Rt);
-   else if (strcmp(F, "addu") == 0)
-      R_addu(Rd, Rs, Rt);
-   else if (strcmp(F, "sub") == 0)
-      R_sub(Rd, Rs, Rt);
-   else if (strcmp(F, "subu") == 0)
-      R_subu(Rd, Rs, Rt);
+   if (strcmp(F, "add") == 0) {R_add(Rd, Rs, Rt);}
+   else if (strcmp(F, "addu") == 0) {R_addu(Rd, Rs, Rt);}
+   else if (strcmp(F, "sub") == 0) {R_sub(Rd, Rs, Rt);}
+   else if (strcmp(F, "subu") == 0) {R_subu(Rd, Rs, Rt);}
+   else if (strcmp(F, "and") == 0) {R_and(Rd, Rs, Rt);}
+   else if (strcmp(F, "nor") == 0) {R_nor(Rd, Rs, Rt);}
+   else if (strcmp(F, "or") == 0) {R_or(Rd, Rs, Rt);}
+   else if (strcmp(F, "xor") == 0) {R_xor(Rd, Rs, Rt);}
    
-   else if (strcmp(F, "and") == 0)
-      R_and(Rd, Rs, Rt);
-   else if (strcmp(F, "nor") == 0)
-      R_nor(Rd, Rs, Rt);
-   else if (strcmp(F, "or") == 0)
-      R_or(Rd, Rs, Rt);
-   else if (strcmp(F, "xor") == 0)
-      R_xor(Rd, Rs, Rt);
-   
-   else if (strcmp(F, "sll") == 0)
-      R_sll(Rd, Rt, Sh);
-   else if (strcmp(F, "srl") == 0)
-      R_srl(Rd, Rt, Sh);
-   else if (strcmp(F, "sra") == 0)
-      R_sra(Rd, Rt, Sh);
-   
-   else if (strcmp(F, "sllv") == 0)
-      R_sllv(Rd, Rs, Rt);
-   else if (strcmp(F, "srlv") == 0)
-      R_srlv(Rd, Rs, Rt);
-   else if (strcmp(F, "srav") == 0)
-      R_srav(Rd, Rs, Rt);
-   
-   else if (strcmp(F, "slt") == 0)
-      R_slt(Rd, Rs, Rt);
-   else if (strcmp(F, "sltu") == 0)
-      R_sltu(Rd, Rs, Rt);
-   
-   
-   else if (strcmp(F, "jr") == 0)
-      R_jr(Rs);
-   else if (strcmp(F, "jalr") == 0)
-      R_jalr(Rs);
+   else if (strcmp(F, "sll") == 0) {R_sll(Rd, Rt, Sh);}  
+   else if (strcmp(F, "srl") == 0) {R_srl(Rd, Rt, Sh);} 
+   else if (strcmp(F, "sra") == 0) {R_sra(Rd, Rt, Sh);}
+   else if (strcmp(F, "sllv") == 0) {R_sllv(Rd, Rs, Rt);}  
+   else if (strcmp(F, "srlv") == 0) {R_srlv(Rd, Rs, Rt);}  
+   else if (strcmp(F, "srav") == 0) {R_srav(Rd, Rs, Rt);}
+
+   else if (strcmp(F, "slt") == 0) {R_slt(Rd, Rs, Rt);}  
+   else if (strcmp(F, "sltu") == 0) {R_sltu(Rd, Rs, Rt);}
+      
+   else if (strcmp(F, "jr") == 0) {R_jr(Rs);}
+   else if (strcmp(F, "jalr") == 0) {R_jalr(Rs);}
+      
    
 }
 void R_add(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
    regs[Rd] = regs[Rs] + regs[Rt];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_addu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -326,17 +307,20 @@ void R_addu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    unsigned int temp = regs[Rs] + regs[Rt];
    regs[Rd] = temp;
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_sub(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
    regs[Rd] = regs[Rs] - regs[Rt];
    num_clock_cycles += 4;
+   PC += 4;
 }
 void R_subu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] - regs[Rt];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 
@@ -345,41 +329,48 @@ void R_and(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] & regs[Rt];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_nor(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = ~(regs[Rs] | regs[Rt]);
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_or(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] | regs[Rt];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_xor(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] ^ regs[Rt];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_sll(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    regs[Rd] = regs[Rt] << Sh;
    num_clock_cycles += 4;
+   PC += 4;
 }
 void R_srl(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    unsigned int temp = regs[Rt] >> Sh;
    regs[Rd] = temp;
    num_clock_cycles += 4;
+   PC += 4;
 }
 void R_sra(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    regs[Rd] = regs[Rt] >> Sh;
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 
@@ -387,6 +378,7 @@ void R_sllv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rt] << regs[Rs];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_srlv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -394,12 +386,14 @@ void R_srlv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    unsigned int temp = regs[Rt] >> regs[Rs];
    regs[Rd] = temp;
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_srav(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rt] >> regs[Rs];
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -409,6 +403,7 @@ void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    else
       regs[Rd] = 0;
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -420,19 +415,23 @@ void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    else
       regs[Rd] = 0;
    num_clock_cycles += 4;
+   PC += 4;
 }
 
 void R_jr(unsigned int Rs)
 {
    PC = regs[rs];
    num_clock_cycles += 3; /*no execute???*/
+   PC += 4;
 }
 
 void R_jalr(unsigned int Rs)
 {
    PC = regs[rs];
-   regs[31] = PC+4;
+   PC += 4;
+   regs[31] = PC;
    num_clock_cycles += 4;
+   
 }
 
 /*
