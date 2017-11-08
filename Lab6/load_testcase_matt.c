@@ -120,15 +120,36 @@ int main(int argc, char *argv[])
             execute_instruction(mem[PC/4]);
          }
          /* print statistics */
+         for (i=0; i < 32; i++)
+         {
+            printf(“R%d: %x\n”, i, regs[i]);
+         }
+         printf(“Instructions Executed: %d\n”, num_instructions);
+         printf(“Memory References: %d\n”, num_memory_accesses);
+         printf(“Clock Cycles: %d\n”, num_clock_cycles);
          exit(0);
       }
       if (strcmp(&action, "step") == 0) {
          execute_instruction(mem[PC/4]);
          if (syscall()) {
             /*print statistics*/
+            for (i=0; i < 32; i++)
+            {
+               printf(“R%d: %x\n”, i, regs[i]);
+            }
+            printf(“Instructions Executed: %d\n”, num_instructions);
+            printf(“Memory References: %d\n”, num_memory_accesses);
+            printf(“Clock Cycles: %d\n”, num_clock_cycles);
             exit(0);
          }
          /*print statistics */
+         for (i=0; i < 32; i++)
+         {
+            printf(“R%d: %x\n”, i, regs[i]);
+         }
+         printf(“Instructions Executed: %d\n”, num_instructions);
+         printf(“Memory References: %d\n”, num_memory_accesses);
+         printf(“Clock Cycles: %d\n”, num_clock_cycles);
       }
       else {
          printf("run | step | exit\n");
