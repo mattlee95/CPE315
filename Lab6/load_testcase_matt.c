@@ -232,7 +232,6 @@ void execute_instruction(MIPS instruction)
    }
    if (instruct == 'r')
    {
-      num_instructions +=1;
       /*obtain index of registers used*/
       rs = (instruction >> 21) & 0x0000001F;
       rt = (instruction >> 16) & 0x0000001F;
