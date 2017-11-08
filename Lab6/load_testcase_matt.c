@@ -537,36 +537,43 @@ void I_lb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
   regs[Rt] = ((signed int)regs[Rs] + (signed int)Imm) & 0x000000FF;
   num_clock_cycles += 4;
+  num_memory_accesses +=1;
 }
 void I_lbu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (regs[Rs] + Imm) & 0x000000FF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = ((signed int)regs[Rs] + (signed int)Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lhu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (regs[Rs] + Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lui(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (Imm >> 16) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (regs[Rs] + Imm);
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_li(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = Imm;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 
 
@@ -574,16 +581,19 @@ void I_sb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rs] = (regs[Rt] - Imm) & 0x000000FF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_sh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rs] = (regs[Rt] - Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rs] = (regs[Rt] - Imm);
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 
 
