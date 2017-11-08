@@ -422,7 +422,6 @@ void R_jr(unsigned int Rs)
 {
    PC = regs[rs];
    num_clock_cycles += 3; /*no execute???*/
-   PC += 4;
 }
 
 void R_jalr(unsigned int Rs)
