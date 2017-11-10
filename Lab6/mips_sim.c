@@ -85,7 +85,7 @@ void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm);
 
 void j(MIPS instruction);
 void jal(MIPS instruction);
-int syscall();
+int syscall(MIPS instruction);
 
 char *func_dic[44] = {"sll", "", "srl", "sra", "sllv", "", "srlv", "srav", "jr",
    "jalr", "", "", "", "", "", "", "", "", "", "", "", "", "",
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
    char action = '\0';
    while (strcmp(&action, "exit") != 0) {
       if (strcmp(&action, "run") == 0) {
-         while (!syscall()) {
+         while (!syscall(mem[PC/4])) {
             execute_instruction(mem[PC/4]);
          }
          print_statistics();
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
       }
       if (strcmp(&action, "step") == 0) {
          execute_instruction(mem[PC/4]);
-         if (syscall()) {
+         if (syscall(mem[PC/4])) {
             print_statistics();
             exit(0);
          }
@@ -149,9 +149,10 @@ void print_statistics() {
 
 }
 
-int syscall() {
-   unsigned int opcode = (regs[2] << 26) & 0x0000003F;
-   if (opcode == 0x000000A) {
+/* checks if program should be terminated */
+int syscall(MIPS instruction) {
+   unsigned int v0 = (regs[2]) & 0xFFFFFFFF;
+   if (((instruction & 0xFFFFFFFF) == 0x0000000C) && (v0 == 0x0000000A)) {
       return 1;
    }
    return 0;
@@ -187,16 +188,6 @@ void load_instructions(char* filename) {
    } while (memp < sizeof(mem)) ;
    
    fclose(fd);
-   /* ok, now dump out the instructions loaded: */
-   
-   /*
-    for (i = 0; i<memp; i+=4)  //  i contains byte offset addresses
-    {
-    printf("Instruction@%08X : %08X\n", i, mem[i/4]);
-    execute_instruction(mem[i/4]);
-    }
-    printf("\n");
-    */
 }
 
 void execute_instruction(MIPS instruction)
@@ -482,6 +473,7 @@ void I_addi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
    regs[Rt] = (signed int)regs[Rs] + (signed int)Imm;
    num_clock_cycles += 4;
 }
+
 void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = regs[Rs] + Imm;
@@ -609,7 +601,7 @@ void j(MIPS instruction) {
    jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address - 1024;
+   PC = jump_address - 0x40000000;  //not sure?
    
    num_clock_cycles += 3;
 }
@@ -620,7 +612,7 @@ void jal(MIPS instruction) {
    jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address - (1024 * 32);
+   PC = jump_address - 0x4000000; //not sure?
    printf("PC = %d\n", PC);
    num_clock_cycles += 4;
 }
