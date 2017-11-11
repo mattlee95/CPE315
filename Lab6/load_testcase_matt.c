@@ -273,7 +273,6 @@ void execute_instruction(MIPS instruction)
    }
    else if (instruct == 'i')
    {
-      printf("broken into i");
       rs = (instruction >> 21) & 0x0000001F;
       rt = (instruction >> 16) & 0x0000001F;
       imm = (instruction) & 0x0000FFFF; 
@@ -608,7 +607,11 @@ void j(MIPS instruction) {
    //jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address - 0x0100004;
+   if (jump_address > 0x0100000)
+   {
+      jump_address -= 0x0100004;
+   }
+   PC = jump_address;
    
    num_clock_cycles += 3;
 }
@@ -620,7 +623,11 @@ void jal(MIPS instruction) {
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
    printf("jump_addr %d\n", jump_address);
-   PC = jump_address - 0x0100004;
+   if (jump_address > 0x0100000)
+   {
+      jump_address -= 0x0100004;
+   }
+   PC = jump_address;
    
    num_clock_cycles += 4;
 }
