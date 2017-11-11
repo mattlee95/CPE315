@@ -12,18 +12,18 @@ int num_memory_accesses;
 int num_clock_cycles;
 
 /*For R instructions*/
-int rs;
-int rd;
-int rt;
-int imm;
-int shamt;
+unsigned int rs;
+unsigned int rd;
+unsigned int rt;
+unsigned short int imm;
+unsigned int shamt;
 
 unsigned int memory[10000];
 
 typedef unsigned int MIPS, *MIPS_PTR;
 
 MB_HDR mb_hdr;    /* Header area */
-MIPS mem[1024];     
+MIPS mem[1024];      /* Room for 4K bytes */
 
 void load_instructions(char *filename);
 void execute_instruction(MIPS instruction);
@@ -85,7 +85,7 @@ void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm);
 
 void j(MIPS instruction);
 void jal(MIPS instruction);
-int syscall(MIPS instruction);
+int syscall();
 
 char *func_dic[44] = {"sll", "", "srl", "sra", "sllv", "", "srlv", "srav", "jr",
    "jalr", "", "", "", "", "", "", "", "", "", "", "", "", "",
@@ -106,30 +106,34 @@ int main(int argc, char *argv[])
 {
    int i;
    char* filename = argv[1]; /* This is the filename to be loaded */
-   /*sets register values to zero*/
-   for (i=0; i < 32; i++)
-      regs[i] = 0;
    load_instructions(filename);
    PC = 0;
    num_instructions = num_clock_cycles = num_memory_accesses = 0; /*initialize all to 0*/
-
+   
+   /*sets register values to zero*/
+   for (i=0; i < 32; i++)
+      regs[i] = 0;
    
    char action = '\0';
    while (strcmp(&action, "exit") != 0) {
       if (strcmp(&action, "run") == 0) {
-         while (!syscall(mem[PC/4])) {
+         while (!syscall()) {
             execute_instruction(mem[PC/4]);
          }
+         /* print statistics */
          print_statistics();
-         exit(0);
       }
       if (strcmp(&action, "step") == 0) {
          execute_instruction(mem[PC/4]);
-         if (syscall(mem[PC/4])) {
+         if (syscall()) {
+            /*print statistics*/
             print_statistics();
-            exit(0);
+            
          }
+         /*print statistics */
          print_statistics();
+         
+         
       }
       else {
          printf("run | step | exit\n");
@@ -139,20 +143,9 @@ int main(int argc, char *argv[])
    exit(0);
 }
 
-void print_statistics() {
-   for (int i=0; i < 32; i++) {
-      printf("R%d: %x\n", i, regs[i]);
-   }
-   printf("Instructions Executed: %d\n", num_instructions);
-   printf("Memory References: %d\n", num_memory_accesses);
-   printf("Clock Cycles: %d\n\n", num_clock_cycles);
-
-}
-
-/* checks if program should be terminated */
-int syscall(MIPS instruction) {
-   unsigned int v0 = (regs[2]) & 0xFFFFFFFF;
-   if (((instruction & 0xFFFFFFFF) == 0x0000000C) && (v0 == 0x0000000A)) {
+int syscall() {
+   unsigned int opcode = (regs[2]) & 0x0000003F;
+   if (opcode == 0x000000A) {
       return 1;
    }
    return 0;
@@ -188,6 +181,16 @@ void load_instructions(char* filename) {
    } while (memp < sizeof(mem)) ;
    
    fclose(fd);
+   /* ok, now dump out the instructions loaded: */
+   
+   /*
+    for (i = 0; i<memp; i+=4)  //  i contains byte offset addresses
+    {
+    printf("Instruction@%08X : %08X\n", i, mem[i/4]);
+    execute_instruction(mem[i/4]);
+    }
+    printf("\n");
+    */
 }
 
 void execute_instruction(MIPS instruction)
@@ -222,12 +225,11 @@ void execute_instruction(MIPS instruction)
    else
    {
       printf("Invalid Instruction\n");
-      PC += 4;
-      num_instructions -= 1;
+      exit(0);
    }
    if (opcode != 0)
    {
-      printf("Opcode = %02X, Function: %s\n", (instruction >> 26) & 0x0000003F, op_dic[opcode]);
+      printf("Opcode = %02X, Function: %s\n", (instruction >> 26) & 0x0000003F, function = op_dic[opcode]);
    }
    else
    {
@@ -255,21 +257,33 @@ void execute_instruction(MIPS instruction)
       rs = (instruction >> 21) & 0x0000001F;
       rt = (instruction >> 16) & 0x0000001F;
       imm = (instruction) & 0x0000FFFF;
-      printf("RS: %s, RT: %s, Imm: %04X\n\n",
-             reg_dic[rs],
-             reg_dic[rt],
-             imm);
-
+      printf("RS: %s, RT: %s, Imm: %04X \n\n", reg_dic[rs], reg_dic[rt], imm);
       execute_I(function, rt, rs, imm);
-      PC += 4;
    }
    else if (instruct == 'j')
    {
       printf("Word Index: %07X\n\n",
              (instruction) & 0x03FFFFFF);
    }
+   PC += 4;
    num_instructions += 1;
 }
+
+void print_statistics()
+{
+   int i;
+   for (i=0; i < 32; i++)
+   {
+      printf("%s: 0x%08x\n", reg_dic[i], regs[i]);
+   }
+   printf("Instructions Executed: %d\n", num_instructions);
+   printf("Memory References: %d\n", num_memory_accesses);
+   printf("Clock Cycles: %d\n", num_clock_cycles);
+   printf("Program Counter: %d\n" , PC);
+   exit(0);
+}
+
+
 
 void execute_R(char *F, unsigned int Rd, unsigned int Rs, unsigned int Rt, unsigned int Sh)
 {
@@ -282,95 +296,84 @@ void execute_R(char *F, unsigned int Rd, unsigned int Rs, unsigned int Rt, unsig
    else if (strcmp(F, "or") == 0) {R_or(Rd, Rs, Rt);}
    else if (strcmp(F, "xor") == 0) {R_xor(Rd, Rs, Rt);}
    
-   else if (strcmp(F, "sll") == 0) {R_sll(Rd, Rt, Sh);}  
-   else if (strcmp(F, "srl") == 0) {R_srl(Rd, Rt, Sh);} 
+   else if (strcmp(F, "sll") == 0) {R_sll(Rd, Rt, Sh);}
+   else if (strcmp(F, "srl") == 0) {R_srl(Rd, Rt, Sh);}
    else if (strcmp(F, "sra") == 0) {R_sra(Rd, Rt, Sh);}
-   else if (strcmp(F, "sllv") == 0) {R_sllv(Rd, Rs, Rt);}  
-   else if (strcmp(F, "srlv") == 0) {R_srlv(Rd, Rs, Rt);}  
+   else if (strcmp(F, "sllv") == 0) {R_sllv(Rd, Rs, Rt);}
+   else if (strcmp(F, "srlv") == 0) {R_srlv(Rd, Rs, Rt);}
    else if (strcmp(F, "srav") == 0) {R_srav(Rd, Rs, Rt);}
-
-   else if (strcmp(F, "slt") == 0) {R_slt(Rd, Rs, Rt);}  
+   
+   else if (strcmp(F, "slt") == 0) {R_slt(Rd, Rs, Rt);}
    else if (strcmp(F, "sltu") == 0) {R_sltu(Rd, Rs, Rt);}
-      
+   
    else if (strcmp(F, "jr") == 0) {R_jr(Rs);}
    else if (strcmp(F, "jalr") == 0) {R_jalr(Rs);}
-      
+   
    
 }
 void R_add(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
    regs[Rd] = (signed int)regs[Rs] + (signed int)regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_addu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] + regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_sub(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
    regs[Rd] = (signed int)regs[Rs] - (signed int)regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 void R_subu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] - regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
-
 
 
 void R_and(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] & regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_nor(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = ~(regs[Rs] | regs[Rt]);
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_or(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] | regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_xor(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] ^ regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_sll(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    regs[Rd] = regs[Rt] << Sh;
    num_clock_cycles += 4;
-   PC += 4;
 }
 void R_srl(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
-   regs[Rd] = regs[Rt] >> Sh;
+   unsigned int temp = regs[Rt] >> Sh;
+   regs[Rd] = temp;
    num_clock_cycles += 4;
-   PC += 4;
 }
 void R_sra(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    regs[Rd] = regs[Rt] >> Sh;
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 
@@ -378,55 +381,49 @@ void R_sllv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rt] << regs[Rs];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_srlv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   regs[Rd] = regs[Rt] >> regs[Rs];
+   unsigned int temp = regs[Rt] >> regs[Rs];
+   regs[Rd] = temp;
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_srav(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rt] >> regs[Rs];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
-{
-   if((signed int)regs[Rs] < (signed int)regs[Rt])
-      regs[Rd] = 1;
-   else
-      regs[Rd] = 0;
-   num_clock_cycles += 4;
-   PC += 4;
-}
-
-void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    if(regs[Rs] < regs[Rt])
       regs[Rd] = 1;
    else
       regs[Rd] = 0;
    num_clock_cycles += 4;
-   PC += 4;
+}
+
+void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
+{
+   if((signed int)regs[Rs] < (signed int)regs[Rt])
+      regs[Rd] = 1;
+   else
+      regs[Rd] = 0;
+   num_clock_cycles += 4;
 }
 
 void R_jr(unsigned int Rs)
 {
    PC = regs[rs];
    num_clock_cycles += 3; /*no execute???*/
-   PC += 4;
 }
 
 void R_jalr(unsigned int Rs)
 {
    PC = regs[rs];
-   PC += 4;
-   regs[31] = PC;
+   regs[31] = PC+4;
    num_clock_cycles += 4;
    
 }
@@ -436,39 +433,38 @@ void R_jalr(unsigned int Rs)
  */
 void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   if (strcmp(F, "addi") == 0) { I_addi(Rt, Rs, Imm); }
-   else if (strcmp(F, "addiu") == 0) { I_addiu(Rt, Rs, Imm); }
-
-   else if (strcmp(F, "andi") == 0) { I_andi(Rt, Rs, Imm); }
-   else if (strcmp(F, "ori") == 0) { I_ori(Rt, Rs, Imm); }
-   else if (strcmp(F, "xori") == 0) { I_xori(Rt, Rs, Imm); }
-
-   else if (strcmp(F, "slti") == 0) { I_slti(Rt, Rs, Imm); }
-   else if (strcmp(F, "sltiu") == 0) { I_sltiu(Rt, Rs, Imm); }
-
-   else if (strcmp(F, "beq") == 0) { I_beq(Rt, Rs, Imm); }
-   else if (strcmp(F, "bne") == 0) { I_bne(Rt, Rs, Imm); }
-
-   else if (strcmp(F, "lb") == 0) { I_lb(Rt, Rs, Imm); }
-   else if (strcmp(F, "lbu") == 0) { I_lbu(Rt, Rs, Imm); }
-   else if (strcmp(F, "lh") == 0) { I_lh(Rt, Rs, Imm); }
-   else if (strcmp(F, "lhu") == 0) { I_lhu(Rt, Rs, Imm); }
-   else if (strcmp(F, "lui") == 0) { I_lui(Rt, Rs, Imm); }
-   else if (strcmp(F, "lw") == 0) { I_lw(Rt, Rs, Imm); }
-   else if (strcmp(F, "li") == 0) { I_li(Rt, Rs, Imm); }
-
-   else if (strcmp(F, "sb") == 0) { I_sb(Rt, Rs, Imm); }
-   else if (strcmp(F, "sh") == 0) { I_sh(Rt, Rs, Imm); }
-   else if (strcmp(F, "sw") == 0) { I_sw(Rt, Rs, Imm); }
+   if (strcmp(F, "addi") == 0) {I_addi(Rt, Rs, Imm);}
+   else if (strcmp(F, "addiu") == 0) {I_addiu(Rt, Rs, Imm);}
+   
+   else if (strcmp(F, "andi") == 0) {I_andi(Rt, Rs, Imm);}
+   else if (strcmp(F, "ori") == 0) {I_ori(Rt, Rs, Imm);}
+   else if (strcmp(F, "xori") == 0) {I_xori(Rt, Rs, Imm);}
+   
+   else if (strcmp(F, "slti") == 0) {I_slti(Rt, Rs, Imm);}
+   else if (strcmp(F, "sltiu") == 0) {I_sltiu(Rt, Rs, Imm);}
+   
+   else if (strcmp(F, "beq") == 0) {I_beq(Rt, Rs, Imm);}
+   else if (strcmp(F, "bne") == 0) {I_bne(Rt, Rs, Imm);}
+   
+   else if (strcmp(F, "lb") == 0) {I_lb(Rt, Rs, Imm);}
+   else if (strcmp(F, "lbu") == 0) {I_lbu(Rt, Rs, Imm);}
+   else if (strcmp(F, "lh") == 0) {I_lh(Rt, Rs, Imm);}
+   else if (strcmp(F, "lhu") == 0) {I_lhu(Rt, Rs, Imm);}
+   else if (strcmp(F, "lui") == 0) {I_lui(Rt, Rs, Imm);}
+   else if (strcmp(F, "lw") == 0) {I_lw(Rt, Rs, Imm);}
+   else if (strcmp(F, "li") == 0) {I_li(Rt, Rs, Imm);}
+   
+   else if (strcmp(F, "sb") == 0) {I_sb(Rt, Rs, Imm);}
+   else if (strcmp(F, "sh") == 0) {I_sh(Rt, Rs, Imm);}
+   else if (strcmp(F, "sw") == 0) {I_sw(Rt, Rs, Imm);}
 }
 
 
 void I_addi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   regs[Rt] = (signed int)regs[Rs] + (signed int)Imm;
+   regs[Rt] = (signed int)regs[Rs] + (signed short int)Imm;
    num_clock_cycles += 4;
 }
-
 void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = regs[Rs] + Imm;
@@ -478,6 +474,7 @@ void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_andi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
+   printf("andi called");
    regs[Rt] = regs[Rs] & Imm;
    num_clock_cycles += 4;
 }
@@ -495,7 +492,7 @@ void I_xori(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_slti(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   if ((signed int)regs[Rs] < (signed int)Imm)
+   if ((signed int)regs[Rs] < (signed short int)Imm)
    {
       regs[Rt] = 1;
    }
@@ -523,7 +520,7 @@ void I_beq(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] == regs[Rs])
    {
-      PC = PC + Imm;
+      PC += (signed short int)Imm;
    }
    num_clock_cycles += 4;
 }
@@ -531,7 +528,7 @@ void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] != regs[Rs])
    {
-      PC = PC + Imm;
+      PC += (signed short int)Imm;
    }
    num_clock_cycles += 4;
 }
@@ -539,38 +536,45 @@ void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_lb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-  regs[Rt] = ((signed int)regs[Rs] + (signed int)Imm) & 0x000000FF;
-  num_clock_cycles += 4;
+   regs[Rt] = ((signed int)regs[Rs] + (signed short int)Imm) & 0x000000FF;
+   num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lbu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (regs[Rs] + Imm) & 0x000000FF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   regs[Rt] = ((signed int)regs[Rs] + (signed int)Imm) & 0x0000FFFF;
+   regs[Rt] = ((signed int)regs[Rs] + (signed short int)Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lhu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (regs[Rs] + Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lui(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (Imm >> 16) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_lw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = (regs[Rs] + Imm);
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_li(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rt] = Imm;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 
 
@@ -578,25 +582,31 @@ void I_sb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rs] = (regs[Rt] - Imm) & 0x000000FF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_sh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rs] = (regs[Rt] - Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    regs[Rs] = (regs[Rt] - Imm);
    num_clock_cycles += 4;
+   num_memory_accesses +=1;
 }
 
 
 void j(MIPS instruction) {
    unsigned int jump_address = (instruction) & 0x03FFFFFF;
-   jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address - 0x40000000;  //not sure?
+   if (jump_address > 0x0100000)
+   {
+      jump_address -= 0x0100004;
+   }
+   PC = jump_address;
    
    num_clock_cycles += 3;
 }
@@ -604,10 +614,14 @@ void j(MIPS instruction) {
 void jal(MIPS instruction) {
    regs[31] = PC + 4;
    unsigned int jump_address = (instruction) & 0x03FFFFFF;
-   jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address - 0x4000000; //not sure?
-   printf("PC = %d\n", PC);
+   printf("jump_addr %d\n", jump_address);
+   if (jump_address > 0x0100000)
+   {
+      jump_address -= 0x0100004;
+   }
+   PC = jump_address;
+   
    num_clock_cycles += 4;
 }
