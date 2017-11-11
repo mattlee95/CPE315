@@ -122,11 +122,12 @@ int main(int argc, char *argv[])
          /* print statistics */
          for (i=0; i < 32; i++)
          {
-            printf(“R%d: %x\n”, i, regs[i]);
+            printf("R%d: %x\n", i, regs[i]);
          }
-         printf(“Instructions Executed: %d\n”, num_instructions);
-         printf(“Memory References: %d\n”, num_memory_accesses);
-         printf(“Clock Cycles: %d\n”, num_clock_cycles);
+         printf("Instructions Executed: %d\n", num_instructions);
+         printf("Memory References: %d\n", num_memory_accesses);
+         printf("Clock Cycles: %d\n", num_clock_cycles);
+         printf("Program Counter: %d\n" , PC);
          exit(0);
       }
       if (strcmp(&action, "step") == 0) {
@@ -135,21 +136,23 @@ int main(int argc, char *argv[])
             /*print statistics*/
             for (i=0; i < 32; i++)
             {
-               printf(“R%d: %x\n”, i, regs[i]);
+               printf("R%d: %x\n", i, regs[i]);
             }
-            printf(“Instructions Executed: %d\n”, num_instructions);
-            printf(“Memory References: %d\n”, num_memory_accesses);
-            printf(“Clock Cycles: %d\n”, num_clock_cycles);
+            printf("Instructions Executed: %d\n", num_instructions);
+            printf("Memory References: %d\n", num_memory_accesses);
+            printf("Clock Cycles: %d\n", num_clock_cycles);
+            printf("Program Counter: %d\n" , PC);
             exit(0);
          }
          /*print statistics */
          for (i=0; i < 32; i++)
          {
-            printf(“R%d: %x\n”, i, regs[i]);
+            printf("R%d: %x\n", i, regs[i]);
          }
-         printf(“Instructions Executed: %d\n”, num_instructions);
-         printf(“Memory References: %d\n”, num_memory_accesses);
-         printf(“Clock Cycles: %d\n”, num_clock_cycles);
+         printf("Instructions Executed: %d\n", num_instructions);
+         printf("Memory References: %d\n", num_memory_accesses);
+         printf("Clock Cycles: %d\n", num_clock_cycles);
+         printf("Program Counter: %d\n" , PC);
       }
       else {
          printf("run | step | exit\n");
@@ -160,7 +163,7 @@ int main(int argc, char *argv[])
 }
 
 int syscall() {
-   unsigned int opcode = (regs[2] << 26) & 0x0000003F;
+   unsigned int opcode = (regs[2]) & 0x0000003F;
    if (opcode == 0x000000A) {
       return 1;
    }
@@ -270,14 +273,11 @@ void execute_instruction(MIPS instruction)
    }
    else if (instruct == 'i')
    {
+      printf("broken into i");
       rs = (instruction >> 21) & 0x0000001F;
       rt = (instruction >> 16) & 0x0000001F;
-      imm = (instruction) & 0x0000FFFF;
-      printf("RS: %s, RT: %s, Imm: %04X\n\n",
-             reg_dic[rs],
-             reg_dic[rt],
-             imm);
-
+      imm = (instruction) & 0x0000FFFF; 
+      printf("RS: %s, RT: %s, Imm: %04X \n\n", reg_dic[rs], reg_dic[rt], imm);
       execute_I(function, rt, rs, imm);
    }
    else if (instruct == 'j')
@@ -319,27 +319,23 @@ void R_add(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overfl
 {
    regs[Rd] = (signed int)regs[Rs] + (signed int)regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_addu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] + regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_sub(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
    regs[Rd] = (signed int)regs[Rs] - (signed int)regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 void R_subu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] - regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 
@@ -348,48 +344,41 @@ void R_and(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] & regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_nor(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = ~(regs[Rs] | regs[Rt]);
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_or(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] | regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_xor(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] ^ regs[Rt];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_sll(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    regs[Rd] = regs[Rt] << Sh;
    num_clock_cycles += 4;
-   PC += 4;
 }
 void R_srl(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    unsigned int temp = regs[Rt] >> Sh;
    regs[Rd] = temp;
    num_clock_cycles += 4;
-   PC += 4;
 }
 void R_sra(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
    regs[Rd] = regs[Rt] >> Sh;
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 
@@ -397,7 +386,6 @@ void R_sllv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rt] << regs[Rs];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_srlv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -405,14 +393,12 @@ void R_srlv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    unsigned int temp = regs[Rt] >> regs[Rs];
    regs[Rd] = temp;
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_srav(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rt] >> regs[Rs];
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -422,7 +408,6 @@ void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    else
       regs[Rd] = 0;
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
@@ -432,7 +417,6 @@ void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
    else
       regs[Rd] = 0;
    num_clock_cycles += 4;
-   PC += 4;
 }
 
 void R_jr(unsigned int Rs)
@@ -495,6 +479,7 @@ void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_andi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
+   printf("andi called");
    regs[Rt] = regs[Rs] & Imm;
    num_clock_cycles += 4;
 }
@@ -540,7 +525,7 @@ void I_beq(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] == regs[Rs])
    {
-      PC = Imm;
+      PC = Imm - 0x0100004;
    }
    num_clock_cycles += 4;
 }
@@ -548,7 +533,7 @@ void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] != regs[Rs])
    {
-      PC = Imm;
+      PC = Imm - 0x0100004;
    }
    num_clock_cycles += 4;
 }
@@ -620,10 +605,10 @@ void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void j(MIPS instruction) {
    unsigned int jump_address = (instruction) & 0x03FFFFFF;
-   jump_address = (jump_address << 2);
+   //jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address;
+   PC = jump_address - 0x0100004;
    
    num_clock_cycles += 3;
 }
@@ -631,10 +616,11 @@ void j(MIPS instruction) {
 void jal(MIPS instruction) {
    regs[31] = PC + 4;
    unsigned int jump_address = (instruction) & 0x03FFFFFF;
-   jump_address = (jump_address << 2);
+   //jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
    jump_address = jump_address + first_pc;
-   PC = jump_address;
+   printf("jump_addr %d\n", jump_address);
+   PC = jump_address - 0x0100004;
    
    num_clock_cycles += 4;
 }
