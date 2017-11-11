@@ -15,7 +15,7 @@ int num_clock_cycles;
 unsigned int rs;
 unsigned int rd;
 unsigned int rt;
-unsigned int imm;
+unsigned short int imm;
 unsigned int shamt;
 
 unsigned int memory[10000];
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
          /* print statistics */
          for (i=0; i < 32; i++)
          {
-            printf("R%d: %x\n", i, regs[i]);
+            printf("%s: %x\n", reg_dic[i], regs[i]);
          }
          printf("Instructions Executed: %d\n", num_instructions);
          printf("Memory References: %d\n", num_memory_accesses);
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
             /*print statistics*/
             for (i=0; i < 32; i++)
             {
-               printf("R%d: %x\n", i, regs[i]);
+               printf("%s: %x\n", reg_dic[i], regs[i]);
             }
             printf("Instructions Executed: %d\n", num_instructions);
             printf("Memory References: %d\n", num_memory_accesses);
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
          /*print statistics */
          for (i=0; i < 32; i++)
          {
-            printf("R%d: %x\n", i, regs[i]);
+            printf("%s: %x\n", reg_dic[i], regs[i]);
          }
          printf("Instructions Executed: %d\n", num_instructions);
          printf("Memory References: %d\n", num_memory_accesses);
@@ -467,7 +467,7 @@ void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_addi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   regs[Rt] = (signed int)regs[Rs] + (signed int)Imm;
+   regs[Rt] = (signed int)regs[Rs] + (signed short int)Imm;
    num_clock_cycles += 4;
 }
 void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
@@ -497,7 +497,7 @@ void I_xori(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_slti(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   if ((signed int)regs[Rs] < (signed int)Imm)
+   if ((signed int)regs[Rs] < (signed short int)Imm)
    {
       regs[Rt] = 1;
    }
@@ -525,7 +525,7 @@ void I_beq(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] == regs[Rs])
    {
-      PC = Imm - 4;
+      PC += (signed short int)Imm;
    }
    num_clock_cycles += 4;
 }
@@ -533,7 +533,7 @@ void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] != regs[Rs])
    {
-      PC = Imm - 4;
+      PC += (signed short int)Imm;
    }
    num_clock_cycles += 4;
 }
@@ -541,7 +541,7 @@ void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void I_lb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-  regs[Rt] = ((signed int)regs[Rs] + (signed int)Imm) & 0x000000FF;
+  regs[Rt] = ((signed int)regs[Rs] + (signed short int)Imm) & 0x000000FF;
   num_clock_cycles += 4;
   num_memory_accesses +=1;
 }
@@ -553,7 +553,7 @@ void I_lbu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 }
 void I_lh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   regs[Rt] = ((signed int)regs[Rs] + (signed int)Imm) & 0x0000FFFF;
+   regs[Rt] = ((signed int)regs[Rs] + (signed short int)Imm) & 0x0000FFFF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
