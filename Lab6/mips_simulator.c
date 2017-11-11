@@ -335,7 +335,6 @@ void R_subu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 }
 
 
-
 void R_and(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
    regs[Rd] = regs[Rs] & regs[Rt];
