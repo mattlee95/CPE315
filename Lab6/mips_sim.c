@@ -106,13 +106,13 @@ int main(int argc, char *argv[])
 {
    int i;
    char* filename = argv[1]; /* This is the filename to be loaded */
-   load_instructions(filename);
-   PC = 0;
-   num_instructions = num_clock_cycles = num_memory_accesses = 0; /*initialize all to 0*/
-   
    /*sets register values to zero*/
    for (i=0; i < 32; i++)
       regs[i] = 0;
+   load_instructions(filename);
+   PC = 0;
+   num_instructions = num_clock_cycles = num_memory_accesses = 0; /*initialize all to 0*/
+
    
    char action = '\0';
    while (strcmp(&action, "exit") != 0) {
@@ -299,22 +299,21 @@ void execute_R(char *F, unsigned int Rd, unsigned int Rs, unsigned int Rt, unsig
 }
 void R_add(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
-   regs[Rd] = regs[Rs] + regs[Rt];
+   regs[Rd] = (signed int)regs[Rs] + (signed int)regs[Rt];
    num_clock_cycles += 4;
    PC += 4;
 }
 
 void R_addu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   unsigned int temp = regs[Rs] + regs[Rt];
-   regs[Rd] = temp;
+   regs[Rd] = regs[Rs] + regs[Rt];
    num_clock_cycles += 4;
    PC += 4;
 }
 
 void R_sub(unsigned int Rd, unsigned int Rs, unsigned int Rt) /*can throw overflow exceptions*/
 {
-   regs[Rd] = regs[Rs] - regs[Rt];
+   regs[Rd] = (signed int)regs[Rs] - (signed int)regs[Rt];
    num_clock_cycles += 4;
    PC += 4;
 }
@@ -363,8 +362,7 @@ void R_sll(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 }
 void R_srl(unsigned int Rd, unsigned int Rt, unsigned int Sh)
 {
-   unsigned int temp = regs[Rt] >> Sh;
-   regs[Rd] = temp;
+   regs[Rd] = regs[Rt] >> Sh;
    num_clock_cycles += 4;
    PC += 4;
 }
@@ -385,8 +383,7 @@ void R_sllv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 
 void R_srlv(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   unsigned int temp = regs[Rt] >> regs[Rs];
-   regs[Rd] = temp;
+   regs[Rd] = regs[Rt] >> regs[Rs];
    num_clock_cycles += 4;
    PC += 4;
 }
@@ -400,7 +397,7 @@ void R_srav(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 
 void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   if(regs[Rs] < regs[Rt])
+   if((signed int)regs[Rs] < (signed int)regs[Rt])
       regs[Rd] = 1;
    else
       regs[Rd] = 0;
@@ -410,9 +407,7 @@ void R_slt(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 
 void R_sltu(unsigned int Rd, unsigned int Rs, unsigned int Rt)
 {
-   unsigned int temp1 = regs[Rs];
-   unsigned int temp2 = regs[Rt];
-   if(temp1 < temp2)
+   if(regs[Rs] < regs[Rt])
       regs[Rd] = 1;
    else
       regs[Rd] = 0;
