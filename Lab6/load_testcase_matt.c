@@ -12,11 +12,11 @@ int num_memory_accesses;
 int num_clock_cycles;
 
 /*For R instructions*/
-int rs;
-int rd;
-int rt;
-int imm;
-int shamt;
+unsigned int rs;
+unsigned int rd;
+unsigned int rt;
+unsigned int imm;
+unsigned int shamt;
 
 unsigned int memory[10000];
 
@@ -248,7 +248,7 @@ void execute_instruction(MIPS instruction)
    }
    if (opcode != 0)
    {
-      printf("Opcode = %02X, Function: %s\n", (instruction >> 26) & 0x0000003F, op_dic[opcode]);
+      printf("Opcode = %02X, Function: %s\n", (instruction >> 26) & 0x0000003F, function = op_dic[opcode]);
    }
    else
    {
@@ -438,30 +438,30 @@ void R_jalr(unsigned int Rs)
  */
 void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
-   if (strcmp(F, "addi") == 0) { I_addi(Rt, Rs, Imm); }
-   else if (strcmp(F, "addiu") == 0) { I_addiu(Rt, Rs, Imm); }
+   if (strcmp(F, "addi") == 0) {I_addi(Rt, Rs, Imm);}
+   else if (strcmp(F, "addiu") == 0) {I_addiu(Rt, Rs, Imm);}
 
-   else if (strcmp(F, "andi") == 0) { I_andi(Rt, Rs, Imm); }
-   else if (strcmp(F, "ori") == 0) { I_ori(Rt, Rs, Imm); }
-   else if (strcmp(F, "xori") == 0) { I_xori(Rt, Rs, Imm); }
+   else if (strcmp(F, "andi") == 0) {I_andi(Rt, Rs, Imm);}
+   else if (strcmp(F, "ori") == 0) {I_ori(Rt, Rs, Imm);}
+   else if (strcmp(F, "xori") == 0) {I_xori(Rt, Rs, Imm);}
 
-   else if (strcmp(F, "slti") == 0) { I_slti(Rt, Rs, Imm); }
-   else if (strcmp(F, "sltiu") == 0) { I_sltiu(Rt, Rs, Imm); }
+   else if (strcmp(F, "slti") == 0) {I_slti(Rt, Rs, Imm);}
+   else if (strcmp(F, "sltiu") == 0) {I_sltiu(Rt, Rs, Imm);}
 
-   else if (strcmp(F, "beq") == 0) { I_beq(Rt, Rs, Imm); }
-   else if (strcmp(F, "bne") == 0) { I_bne(Rt, Rs, Imm); }
+   else if (strcmp(F, "beq") == 0) {I_beq(Rt, Rs, Imm);}
+   else if (strcmp(F, "bne") == 0) {I_bne(Rt, Rs, Imm);}
 
-   else if (strcmp(F, "lb") == 0) { I_lb(Rt, Rs, Imm); }
-   else if (strcmp(F, "lbu") == 0) { I_lbu(Rt, Rs, Imm); }
-   else if (strcmp(F, "lh") == 0) { I_lh(Rt, Rs, Imm); }
-   else if (strcmp(F, "lhu") == 0) { I_lhu(Rt, Rs, Imm); }
-   else if (strcmp(F, "lui") == 0) { I_lui(Rt, Rs, Imm); }
-   else if (strcmp(F, "lw") == 0) { I_lw(Rt, Rs, Imm); }
-   else if (strcmp(F, "li") == 0) { I_li(Rt, Rs, Imm); }
+   else if (strcmp(F, "lb") == 0) {I_lb(Rt, Rs, Imm);}
+   else if (strcmp(F, "lbu") == 0) {I_lbu(Rt, Rs, Imm);}
+   else if (strcmp(F, "lh") == 0) {I_lh(Rt, Rs, Imm);}
+   else if (strcmp(F, "lhu") == 0) {I_lhu(Rt, Rs, Imm);}
+   else if (strcmp(F, "lui") == 0) {I_lui(Rt, Rs, Imm);}
+   else if (strcmp(F, "lw") == 0) {I_lw(Rt, Rs, Imm);}
+   else if (strcmp(F, "li") == 0) {I_li(Rt, Rs, Imm);}
 
-   else if (strcmp(F, "sb") == 0) { I_sb(Rt, Rs, Imm); }
-   else if (strcmp(F, "sh") == 0) { I_sh(Rt, Rs, Imm); }
-   else if (strcmp(F, "sw") == 0) { I_sw(Rt, Rs, Imm); }
+   else if (strcmp(F, "sb") == 0) {I_sb(Rt, Rs, Imm);}
+   else if (strcmp(F, "sh") == 0) {I_sh(Rt, Rs, Imm);}
+   else if (strcmp(F, "sw") == 0) {I_sw(Rt, Rs, Imm);}
 }
 
 
@@ -525,7 +525,7 @@ void I_beq(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] == regs[Rs])
    {
-      PC = Imm - 0x0100004;
+      PC = Imm - 4;
    }
    num_clock_cycles += 4;
 }
@@ -533,7 +533,7 @@ void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 {
    if (regs[Rt] != regs[Rs])
    {
-      PC = Imm - 0x0100004;
+      PC = Imm - 4;
    }
    num_clock_cycles += 4;
 }
