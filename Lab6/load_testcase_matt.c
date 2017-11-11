@@ -55,31 +55,31 @@ void R_jalr(unsigned int Rs);
 /*--------------------------------------------------------------------------------------*/
 
 /*ALL I instructions----------------------------------------------------------------------*/
-void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_addi(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm);
+void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_addi(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_addiu(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
 
-void I_andi(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_ori(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_xori(unsigned int Rt, unsigned int Rs, unsigned int Imm);
+void I_andi(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_ori(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_xori(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
 
-void I_slti(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_sltiu(unsigned int Rt, unsigned int Rs, unsigned int Imm);
+void I_slti(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_sltiu(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
 
-void I_beq(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm);
+void I_beq(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_bne(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
 
-void I_lb(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_lbu(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_lh(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_lhu(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_lui(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_lw(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_li(unsigned int Rt, unsigned int Rs, unsigned int Imm);
+void I_lb(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_lbu(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_lh(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_lhu(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_lui(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_lw(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_li(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
 
-void I_sb(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_sh(unsigned int Rt, unsigned int Rs, unsigned int Imm);
-void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm);
+void I_sb(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_sh(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
+void I_sw(unsigned int Rt, unsigned int Rs, unsigned short int Imm);
 /*--------------------------------------------------------------------------------------*/
 
 void j(MIPS instruction);
@@ -435,7 +435,7 @@ void R_jalr(unsigned int Rs)
 /*
  * Immediate Type Instructions
  */
-void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    if (strcmp(F, "addi") == 0) {I_addi(Rt, Rs, Imm);}
    else if (strcmp(F, "addiu") == 0) {I_addiu(Rt, Rs, Imm);}
@@ -464,13 +464,13 @@ void execute_I(char *F, unsigned int Rt, unsigned int Rs, unsigned int Imm)
 }
 
 
-void I_addi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_addi(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = *(signed int*)&regs[Rs] + *(signed short int*)&Imm;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_addiu(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = regs[Rs] + Imm;
    num_clock_cycles += 4;
@@ -478,20 +478,20 @@ void I_addiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 }
 
 
-void I_andi(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_andi(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    printf("andi called");
    regs[Rt] = regs[Rs] & Imm;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_ori(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_ori(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = regs[Rs] | Imm;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_xori(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_xori(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = regs[Rs] ^ Imm;
    num_clock_cycles += 4;
@@ -499,7 +499,7 @@ void I_xori(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 }
 
 
-void I_slti(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_slti(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    if (*(signed int*)&regs[Rs] < *(signed short int*)&Imm)
    {
@@ -512,7 +512,7 @@ void I_slti(unsigned int Rt, unsigned int Rs, unsigned int Imm)
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_sltiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_sltiu(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    if (regs[Rs] < Imm)
    {
@@ -527,62 +527,62 @@ void I_sltiu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 }
 
 
-void I_beq(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_beq(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    if (regs[Rt] == regs[Rs])
    {
-      PC += *(signed short int*)&Imm;
+      PC += *(signed short int*)&Imm << 2;
    }
    num_clock_cycles += 4;
 }
-void I_bne(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_bne(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    if (regs[Rt] != regs[Rs])
    {
-      PC += *(signed short int*)&Imm;
+      PC += *(signed short int*)&Imm << 2;
    }
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
 
 
-void I_lb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_lb(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
   regs[Rt] = mem[(*(signed int*)&regs[Rs] + *(signed short int*)&Imm)] & 0x000000FF;
   num_clock_cycles += 4;
   num_memory_accesses +=1;
 }
-void I_lbu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_lbu(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = mem[(regs[Rs] + Imm)] & 0x000000FF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_lh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_lh(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = mem[(*(signed int*)&regs[Rs] + *(signed short int*)&Imm)] & 0x0000FFFF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_lhu(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_lhu(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = mem[regs[Rs] + Imm] & 0x0000FFFF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_lui(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_lui(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = (mem[regs[Rs] + Imm] >> 16) & 0x0000FFFF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_lw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_lw(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = mem[(regs[Rs] + Imm)];
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_li(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_li(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    regs[Rt] = Imm;
    num_clock_cycles += 4;
@@ -590,19 +590,19 @@ void I_li(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 }
 
 
-void I_sb(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_sb(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    mem[regs[Rs] + Imm] = regs[Rt] & 0x000000FF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_sh(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_sh(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    mem[regs[Rs]] = regs[Rt] & 0x0000FFFF;
    num_clock_cycles += 4;
    num_memory_accesses +=1;
 }
-void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
+void I_sw(unsigned int Rt, unsigned int Rs, unsigned short int Imm)
 {
    mem[regs[Rs]] = regs[Rt];
    num_clock_cycles += 4;
@@ -612,13 +612,9 @@ void I_sw(unsigned int Rt, unsigned int Rs, unsigned int Imm)
 
 void j(MIPS instruction) {
    unsigned int jump_address = (instruction) & 0x03FFFFFF;
-   //jump_address = (jump_address << 2);
+   jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
-   jump_address = jump_address + first_pc;
-   if (jump_address > 0x0100000)
-   {
-      jump_address -= 0x0100004;
-   }
+   jump_address = jump_address + first_pc - 4;
    PC = jump_address;
    
    num_clock_cycles += 3;
@@ -627,14 +623,10 @@ void j(MIPS instruction) {
 void jal(MIPS instruction) {
    regs[31] = PC + 4;
    unsigned int jump_address = (instruction) & 0x03FFFFFF;
-   //jump_address = (jump_address << 2);
+   jump_address = (jump_address << 2);
    unsigned int first_pc = (PC & 0xF0000000);
-   jump_address = jump_address + first_pc;
+   jump_address = jump_address + first_pc - 4;
    printf("jump_addr %d\n", jump_address);
-   if (jump_address > 0x0100000)
-   {
-      jump_address -= 0x0100004;
-   }
    PC = jump_address;
    
    num_clock_cycles += 4;
