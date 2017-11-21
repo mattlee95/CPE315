@@ -327,6 +327,11 @@ int main(int argc, char *argv[])
          printf("Clock Cycles: %d\n", num_clock_cycles);
          printf("Program Counter: %d\n" , PC);
 			printf("Pipelined Cycles %d\n", PIPE.clock_index);
+			printf("Fetch Cycles: %d\n",num_fetch);
+			printf("Register Read Cycles: %d\n",num_reg);
+			printf("ALU Cycles: %d\n",num_ex);
+			printf("Memory Cycles: %d\n",num_mem);
+			printf("Register Write Cycles: %d\n",num_write);
          exit(0);
       }
       if (strcmp(&action, "step") == 0) {
