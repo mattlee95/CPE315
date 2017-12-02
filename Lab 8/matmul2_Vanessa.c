@@ -1,6 +1,4 @@
 
-
-
 #define AMAX 10			/* Maximum (square) array size */
 
 #define CACHESIM 1		/* Set to 1 if simulating Cache */
