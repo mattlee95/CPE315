@@ -188,5 +188,6 @@ int main()
     }
 
     printf("HITS: %d\nMISSES: %d\nREADS: %d\nWRITES: %d\n",num_hit,num_miss,num_read,num_write);
+    printf("HIT:MISS Ratio: %f\nREAD:WRITE Ratio: %f\n",(double)num_hit/(double)num_miss,(double)num_read/(double)num_write);
     return 0;
 }
